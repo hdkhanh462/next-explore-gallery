@@ -8,11 +8,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export const DEFAULT_ORDER = "createdAt|desc";
+export const DEFAULT_ORDER = "likes|desc";
 
 const SORTS: SortOption[] = [
   { value: { by: "createdAt", order: "desc" }, label: "Latest" },
-  { value: { by: "createdAt", order: "asc" }, label: "Oldest" },
+  { value: { by: "likes", order: "desc" }, label: "Trending" },
   { value: { by: "title", order: "asc" }, label: "Title A-Z" },
   { value: { by: "title", order: "desc" }, label: "Title Z-A" },
 ];

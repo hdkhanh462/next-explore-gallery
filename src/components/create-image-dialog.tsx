@@ -55,7 +55,6 @@ export default function CreateImageDialog({ onCreated }: Props) {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log("Values:", values);
     try {
       await fetch("/api/images", {
         method: "POST",

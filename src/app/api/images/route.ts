@@ -1,7 +1,8 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { DB } from "@/data/mock-items";
 import type { ImageItem } from "@/types/image";
+
+export const DB: ImageItem[] = [];
 
 function seedIfEmpty() {
   if (DB.length > 0) return;
@@ -11,6 +12,7 @@ function seedIfEmpty() {
       title: `Sample Image ${i}`,
       url: `https://picsum.photos/seed/${i}/600/400`,
       tags: i % 2 === 0 ? ["nature"] : ["city"],
+      likes: Math.floor(Math.random() * 100),
       createdAt: new Date(Date.now() - i * 1000 * 60 * 60).toISOString(),
     });
   }
@@ -44,6 +46,9 @@ export async function GET(req: NextRequest) {
       if (typeof aValue === "string" && typeof bValue === "string") {
         if (order === "asc") return aValue.localeCompare(bValue);
         else return bValue.localeCompare(aValue);
+      } else if (typeof aValue === "number" && typeof bValue === "number") {
+        if (order === "asc") return aValue - bValue;
+        else return bValue - aValue;
       }
       return 0;
     });
@@ -66,6 +71,7 @@ export async function POST(req: NextRequest) {
       title: body.title || `Untitled ${DB.length + 1}`,
       url: body.url || `https://picsum.photos/seed/${Math.random()}/600/400`,
       tags: body.tags || [],
+      likes: 0,
       createdAt: new Date().toISOString(),
     };
     DB.unshift(newItem);

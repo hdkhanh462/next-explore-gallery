@@ -3,18 +3,14 @@
 
 "use client";
 
-import { betterFetch } from "@better-fetch/fetch";
-import {
-  type InfiniteData,
-  type QueryKey,
-  useInfiniteQuery,
-} from "@tanstack/react-query";
+import { HeartIcon } from "lucide-react";
 import Image from "next/image";
 import React from "react";
 import { useInView } from "react-intersection-observer";
 import { DEFAULT_LIMIT } from "@/components/limit-selector";
 import { DEFAULT_ORDER } from "@/components/order-selector";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Item,
   ItemContent,
@@ -24,56 +20,11 @@ import {
   ItemTitle,
 } from "@/components/ui/item";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { ImageItem } from "@/types/image";
-
-type ImageResponse = {
-  data: ImageItem[];
-  meta: {
-    page: number;
-    limit: number;
-    total: number;
-    order: string;
-    orderBy: string;
-  };
-};
-
-type ImageParams = {
-  q?: string;
-  tag?: string;
-  limit?: number;
-  order?: string;
-};
-
-type FetchImagesParams = {
-  pageParam?: number;
-  queryKey: ImageParams;
-};
-
-async function fetchImages({
-  pageParam = 1,
-  queryKey: { q = "", tag = "", limit = DEFAULT_LIMIT, order = DEFAULT_ORDER },
-}: FetchImagesParams) {
-  const url = new URL("/api/images", window.location.origin);
-  if (pageParam) url.searchParams.append("page", pageParam.toString());
-  if (q) url.searchParams.append("q", q);
-  if (tag) url.searchParams.append("tag", tag);
-  if (limit) url.searchParams.append("limit", limit.toString());
-  if (order) {
-    const [by, ord] = order.split("|");
-    if (by && ord) {
-      url.searchParams.append("orderBy", by);
-      url.searchParams.append("order", ord);
-    }
-  }
-
-  const res = await betterFetch<ImageResponse>(url.toString());
-  return (
-    res.data ?? {
-      data: [],
-      meta: { page: 1, total: 0, limit, order: "", orderBy: "" },
-    }
-  );
-}
+import { useToggleLikeImageMutation } from "@/data/mutations";
+import { useInfiniteImages } from "@/data/queries";
+import useLocalStorage from "@/hooks/use-local-storage";
+import { cn } from "@/lib/utils";
+import type { ImageItem, ImageParams } from "@/types/image";
 
 export default function ImageFeed({
   q = "",
@@ -84,23 +35,7 @@ export default function ImageFeed({
   const { ref: bottomRef, inView } = useInView({
     threshold: 0.1,
   });
-  const query = useInfiniteQuery<
-    ImageResponse,
-    Error,
-    InfiniteData<ImageResponse>,
-    QueryKey,
-    number
-  >({
-    queryKey: ["images", { q, tag, limit, order }],
-    queryFn: ({ pageParam = 1 }) =>
-      fetchImages({ pageParam, queryKey: { q, tag, limit, order } }),
-    getNextPageParam: (lastPage) => {
-      const { page, limit, total } = lastPage.meta;
-      const nextPage = page + 1;
-      return (nextPage - 1) * limit < total ? nextPage : undefined;
-    },
-    initialPageParam: 1,
-  });
+  const query = useInfiniteImages({ q, tag, limit, order });
 
   React.useEffect(() => {
     if (inView && query.hasNextPage && !query.isFetchingNextPage) {
@@ -138,6 +73,8 @@ export default function ImageFeed({
 }
 
 export function ImageItemCard({ img }: { img: ImageItem }) {
+  const toggleLikeMutation = useToggleLikeImageMutation({ img });
+  const [likedImages] = useLocalStorage<string[]>("liked-images", []);
   return (
     <Item variant="outline">
       <ItemHeader>
@@ -152,7 +89,26 @@ export function ImageItemCard({ img }: { img: ImageItem }) {
         </div>
       </ItemHeader>
       <ItemContent>
-        <ItemTitle>{img.title}</ItemTitle>
+        <ItemTitle className="justify-between flex w-full">
+          {img.title}
+          <Button
+            onClick={() =>
+              toggleLikeMutation.mutate({
+                id: img.id,
+                liked: !likedImages?.includes(img.id),
+              })
+            }
+            variant="ghost"
+            size="sm"
+            className={cn(
+              "hover:text-destructive",
+              likedImages?.includes(img.id) && "text-destructive",
+            )}
+          >
+            {img.likes}
+            <HeartIcon />
+          </Button>
+        </ItemTitle>
         <ItemDescription>
           {img.tags &&
             img.tags.length > 0 &&
