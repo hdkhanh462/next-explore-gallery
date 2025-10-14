@@ -13,9 +13,11 @@ import Image from "next/image";
 import React from "react";
 import { useInView } from "react-intersection-observer";
 import { DEFAULT_LIMIT } from "@/components/limit-selector";
+import { Badge } from "@/components/ui/badge";
 import {
   Item,
   ItemContent,
+  ItemDescription,
   ItemGroup,
   ItemHeader,
   ItemTitle,
@@ -131,6 +133,15 @@ export function ImageItemCard({ img }: { img: ImageItem }) {
       </ItemHeader>
       <ItemContent>
         <ItemTitle>{img.title}</ItemTitle>
+        <ItemDescription>
+          {img.tags &&
+            img.tags.length > 0 &&
+            img.tags.map((tag) => (
+              <Badge key={tag} className="mr-1 capitalize leading-none">
+                {tag}
+              </Badge>
+            ))}
+        </ItemDescription>
       </ItemContent>
     </Item>
   );
@@ -151,6 +162,7 @@ export function ImageFeedSkeleton() {
           </ItemHeader>
           <ItemContent>
             <Skeleton className="h-4 w-3/4" />
+            <Skeleton className="mt-2 h-4 w-1/2" />
           </ItemContent>
         </Item>
       ))}
