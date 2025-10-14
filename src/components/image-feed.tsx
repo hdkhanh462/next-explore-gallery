@@ -13,6 +13,7 @@ import Image from "next/image";
 import React from "react";
 import { useInView } from "react-intersection-observer";
 import { DEFAULT_LIMIT } from "@/components/limit-selector";
+import { DEFAULT_ORDER } from "@/components/order-selector";
 import { Badge } from "@/components/ui/badge";
 import {
   Item,
@@ -31,6 +32,8 @@ type ImageResponse = {
     page: number;
     limit: number;
     total: number;
+    order: string;
+    orderBy: string;
   };
 };
 
@@ -38,6 +41,7 @@ type ImageParams = {
   q?: string;
   tag?: string;
   limit?: number;
+  order?: string;
 };
 
 type FetchImagesParams = {
@@ -47,19 +51,35 @@ type FetchImagesParams = {
 
 async function fetchImages({
   pageParam = 1,
-  queryKey: { q = "", tag = "", limit = DEFAULT_LIMIT },
+  queryKey: { q = "", tag = "", limit = DEFAULT_LIMIT, order = DEFAULT_ORDER },
 }: FetchImagesParams) {
-  const res = await betterFetch<ImageResponse>(
-    `/api/images?page=${pageParam}&limit=${limit}&q=${encodeURIComponent(q)}&tag=${encodeURIComponent(tag)}`,
-  );
+  const url = new URL("/api/images", window.location.origin);
+  if (pageParam) url.searchParams.append("page", pageParam.toString());
+  if (q) url.searchParams.append("q", q);
+  if (tag) url.searchParams.append("tag", tag);
+  if (limit) url.searchParams.append("limit", limit.toString());
+  if (order) {
+    const [by, ord] = order.split("|");
+    if (by && ord) {
+      url.searchParams.append("orderBy", by);
+      url.searchParams.append("order", ord);
+    }
+  }
 
-  return res.data ?? { data: [], meta: { page: 1, total: 0, limit } };
+  const res = await betterFetch<ImageResponse>(url.toString());
+  return (
+    res.data ?? {
+      data: [],
+      meta: { page: 1, total: 0, limit, order: "", orderBy: "" },
+    }
+  );
 }
 
 export default function ImageFeed({
   q = "",
   tag = "",
   limit = DEFAULT_LIMIT,
+  order = DEFAULT_ORDER,
 }: ImageParams) {
   const { ref: bottomRef, inView } = useInView({
     threshold: 0.1,
@@ -71,9 +91,9 @@ export default function ImageFeed({
     QueryKey,
     number
   >({
-    queryKey: ["images", { q, tag, limit }],
+    queryKey: ["images", { q, tag, limit, order }],
     queryFn: ({ pageParam = 1 }) =>
-      fetchImages({ pageParam, queryKey: { q, tag, limit } }),
+      fetchImages({ pageParam, queryKey: { q, tag, limit, order } }),
     getNextPageParam: (lastPage) => {
       const { page, limit, total } = lastPage.meta;
       const nextPage = page + 1;

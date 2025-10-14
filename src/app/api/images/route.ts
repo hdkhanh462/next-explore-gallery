@@ -1,8 +1,7 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
+import { DB } from "@/data/mock-items";
 import type { ImageItem } from "@/types/image";
-
-const DB: ImageItem[] = [];
 
 function seedIfEmpty() {
   if (DB.length > 0) return;
@@ -24,6 +23,8 @@ export async function GET(req: NextRequest) {
   const page = Math.max(1, Number(url.searchParams.get("page") || "1"));
   const limit = Math.min(50, Number(url.searchParams.get("limit") || "10"));
   const tag = url.searchParams.get("tag") || "";
+  const order = url.searchParams.get("order") || "desc";
+  const orderBy = url.searchParams.get("orderBy") || "createdAt";
 
   let items = DB.slice();
 
@@ -35,12 +36,25 @@ export async function GET(req: NextRequest) {
     items = items.filter((i) => i.tags?.includes(tag));
   }
 
+  if (orderBy && (order === "asc" || order === "desc")) {
+    items.sort((a, b) => {
+      const aValue = a[orderBy as keyof ImageItem];
+      const bValue = b[orderBy as keyof ImageItem];
+
+      if (typeof aValue === "string" && typeof bValue === "string") {
+        if (order === "asc") return aValue.localeCompare(bValue);
+        else return bValue.localeCompare(aValue);
+      }
+      return 0;
+    });
+  }
+
   const start = (page - 1) * limit;
   const paged = items.slice(start, start + limit);
 
   return NextResponse.json({
     data: paged,
-    meta: { page, limit, total: items.length },
+    meta: { page, limit, total: items.length, order, orderBy },
   });
 }
 

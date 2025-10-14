@@ -7,12 +7,14 @@ import ImageFeed from "@/components/image-feed";
 import ImageSearchBar from "@/components/image-search-bar";
 import LimitSelector, { DEFAULT_LIMIT } from "@/components/limit-selector";
 import { ModeToggle } from "@/components/mode-toggle";
+import OrderSelector, { DEFAULT_ORDER } from "@/components/order-selector";
 import TagFilter from "@/components/tag-filter";
 
 export default function Home() {
   const [query, setQuery] = React.useState("");
   const [tag, setTag] = React.useState("all");
   const [limit, setLimit] = React.useState(DEFAULT_LIMIT);
+  const [order, setOrder] = React.useState(DEFAULT_ORDER);
   const queryClient = useQueryClient();
 
   const handleCreated = () => {
@@ -32,12 +34,15 @@ export default function Home() {
         </div>
         <div className="flex justify-between w-full">
           <TagFilter selected={tag} onChange={setTag} />
-          <LimitSelector
-            selected={String(limit)}
-            onChange={(value) => setLimit(Number(value))}
-          />
+          <div className="flex gap-2 items-center">
+            <OrderSelector selected={order} onChange={setOrder} />
+            <LimitSelector
+              selected={String(limit)}
+              onChange={(value) => setLimit(Number(value))}
+            />
+          </div>
         </div>
-        <ImageFeed q={query} tag={tag} limit={limit} />
+        <ImageFeed q={query} tag={tag} limit={limit} order={order} />
       </main>
     </div>
   );
