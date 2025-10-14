@@ -17,7 +17,7 @@ type Props = {
 export default function ImageSearchBar({ onSearch }: Props) {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [value, setValue] = React.useState("");
-  const debouncedValue = useDebounce(value, 500);
+  const debouncedValue = useDebounce(value, 300);
 
   React.useEffect(() => {
     onSearch(debouncedValue.trim());

@@ -98,7 +98,7 @@ export default function ImageFeed({
 
   return (
     <div>
-      <ItemGroup className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <ItemGroup className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {query.data?.pages
           .flatMap((p) => p.data)
           .map((img) => (
@@ -121,7 +121,7 @@ export function ImageItemCard({ img }: { img: ImageItem }) {
   return (
     <Item variant="outline">
       <ItemHeader>
-        <div className="relative aspect-[4/3] bg-muted w-full">
+        <div className="relative aspect-video bg-muted w-full">
           <Image
             src={img.url}
             alt={img.title}
@@ -151,12 +151,12 @@ export function ImageFeedSkeleton() {
   const placeholders = Array.from({ length: 8 });
 
   return (
-    <ItemGroup className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    <ItemGroup className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
       {placeholders.map((_, index) => (
         // biome-ignore lint/suspicious/noArrayIndexKey: <>
         <Item key={index} variant="outline">
           <ItemHeader>
-            <div className="relative aspect-[4/3] w-full">
+            <div className="relative aspect-video w-full">
               <Skeleton className="absolute inset-0 w-full h-full rounded-sm" />
             </div>
           </ItemHeader>
