@@ -8,9 +8,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export const DEFAULT_LIMIT = 8;
+export const DEFAULT_LIMIT = 6;
 
-const LIMITS = ["4", "8", "12", "16", "20"];
+const LIMITS = ["6", "12", "18", "24", "30"];
 
 type Props = {
   selected: string;

@@ -11,7 +11,12 @@ type Props = {
 
 export default function TagFilter({ selected, onChange }: Props) {
   return (
-    <Tabs defaultValue="all" value={selected} onValueChange={onChange}>
+    <Tabs
+      defaultValue="all"
+      value={selected}
+      onValueChange={onChange}
+      className="max-sm:order-2"
+    >
       <TabsList>
         {TAGS.map((tag) => (
           <TabsTrigger key={tag} value={tag} className="capitalize">

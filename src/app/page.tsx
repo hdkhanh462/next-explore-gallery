@@ -1,6 +1,5 @@
 "use client";
 
-import { useQueryClient } from "@tanstack/react-query";
 import React from "react";
 import CreateImageDialog from "@/components/create-image-dialog";
 import ImageFeed from "@/components/image-feed";
@@ -15,24 +14,19 @@ export default function Home() {
   const [tag, setTag] = React.useState("all");
   const [limit, setLimit] = React.useState(DEFAULT_LIMIT);
   const [order, setOrder] = React.useState(DEFAULT_ORDER);
-  const queryClient = useQueryClient();
-
-  const handleCreated = () => {
-    queryClient.invalidateQueries({ queryKey: ["images"], type: "active" });
-  };
 
   return (
     <div className="container mx-auto h-dvh px-4">
       <main className="py-8 space-y-6">
         <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold mb-6">Explore Gallery</h1>
+          <h1 className="text-2xl font-bold">Explore Gallery</h1>
           <ModeToggle />
         </div>
         <div className="flex gap-2 items-center w-full">
           <ImageSearchBar onSearch={(q) => setQuery(q)} />
-          <CreateImageDialog onCreated={handleCreated} />
+          <CreateImageDialog />
         </div>
-        <div className="flex justify-between w-full">
+        <div className="flex justify-between w-full max-sm:flex-col gap-y-6">
           <TagFilter selected={tag} onChange={setTag} />
           <div className="flex gap-2 items-center">
             <OrderSelector selected={order} onChange={setOrder} />

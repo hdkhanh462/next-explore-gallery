@@ -5,6 +5,7 @@
 
 import { HeartIcon } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 import { useInView } from "react-intersection-observer";
 import { DEFAULT_LIMIT } from "@/components/limit-selector";
@@ -90,7 +91,10 @@ export function ImageItemCard({ img }: { img: ImageItem }) {
       </ItemHeader>
       <ItemContent>
         <ItemTitle className="justify-between flex w-full">
-          {img.title}
+          <Link href={`/images/${img.id}`} className="hover:underline">
+            {img.title}
+          </Link>
+
           <Button
             onClick={() =>
               toggleLikeMutation.mutate({
@@ -110,8 +114,7 @@ export function ImageItemCard({ img }: { img: ImageItem }) {
           </Button>
         </ItemTitle>
         <ItemDescription>
-          {img.tags &&
-            img.tags.length > 0 &&
+          {img.tags.length > 0 &&
             img.tags.map((tag) => (
               <Badge key={tag} className="mr-1 capitalize leading-none">
                 {tag}

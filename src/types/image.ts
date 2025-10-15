@@ -2,7 +2,7 @@ export type ImageItem = {
   id: string;
   title: string;
   url: string;
-  tags?: string[];
+  tags: string[];
   likes: number;
   createdAt: string;
 };

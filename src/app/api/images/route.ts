@@ -1,5 +1,6 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
+import { imageFormSchema } from "@/schemas/image.schema";
 import type { ImageItem } from "@/types/image";
 
 export const DB: ImageItem[] = [];
@@ -65,7 +66,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
+    const body = imageFormSchema.parse(await req.json());
     const newItem: ImageItem = {
       id: String(DB.length + 1),
       title: body.title || `Untitled ${DB.length + 1}`,
@@ -76,7 +77,8 @@ export async function POST(req: NextRequest) {
     };
     DB.unshift(newItem);
     return NextResponse.json({ data: newItem }, { status: 201 });
-  } catch {
+  } catch (error) {
+    console.error(error);
     return NextResponse.json({ error: "Invalid body" }, { status: 400 });
   }
 }
