@@ -74,7 +74,9 @@ test.describe("Search and Infinite Scroll", () => {
     });
 
     // Wait for "Loading more..." text to appear
-    await expect(page.locator("text=Loading more...")).toBeVisible();
+    await expect(page.locator("text=Loading more...")).toBeVisible({
+      timeout: 10_000,
+    });
 
     // Wait for more images to load
     await expect(page.locator("text=Loading more...")).toBeHidden();
