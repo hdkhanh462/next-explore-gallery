@@ -37,6 +37,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.0",
+    "@playwright/test": "^1.56.0",
     "@tailwindcss/postcss": "^4",
     "@tanstack/react-query-devtools": "^5.90.2",
     "@types/node": "^20",
