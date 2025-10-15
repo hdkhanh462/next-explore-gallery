@@ -73,13 +73,11 @@ test.describe("Search and Infinite Scroll", () => {
       window.scrollTo(0, document.body.scrollHeight);
     });
 
-    // Wait for "Loading more..." text to appear
-    await expect(page.locator("text=Loading more...")).toBeVisible({
-      timeout: 10_000,
-    });
+    // Wait for "Loading more" text to appear
+    await page.waitForSelector("text=Loading more");
 
     // Wait for more images to load
-    await expect(page.locator("text=Loading more...")).toBeHidden();
+    await expect(page.locator("text=Loading more")).toBeHidden();
     const moreImages = await page
       .locator('[data-testid="image-feed"] > div')
       .count();
