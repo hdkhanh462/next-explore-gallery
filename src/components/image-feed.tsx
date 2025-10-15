@@ -76,7 +76,12 @@ export default function ImageFeed({
   );
 }
 
-export function ImageItemCard({ img }: { img: ImageItem }) {
+type ImageItemCard = {
+  img: ImageItem;
+  priority?: boolean;
+};
+
+export function ImageItemCard({ img, priority }: ImageItemCard) {
   const toggleLikeMutation = useToggleLikeImageMutation({ img });
   const [likedImages] = useLocalStorage<string[]>("liked-images", []);
   return (
@@ -86,13 +91,11 @@ export function ImageItemCard({ img }: { img: ImageItem }) {
           <Image
             src={img.url}
             alt={img.title}
-            fill
-            className="object-cover rounded-sm"
+            className="object-cover rounded-sm size-full"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             quality={50}
-            sizes="
-              (max-width: 640px) 100vw,
-              (max-width: 1024px) 50vw,
-              33vw"
+            priority={priority}
+            fill
           />
         </div>
       </ItemHeader>

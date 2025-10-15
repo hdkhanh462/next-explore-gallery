@@ -26,17 +26,12 @@ type SortOption = {
 };
 
 type Props = {
-  selected: string;
   onChange: (sort: string) => void;
 };
 
-export default function OrderSelector({ selected, onChange }: Props) {
+export default function OrderSelector({ onChange }: Props) {
   return (
-    <Select
-      defaultValue={DEFAULT_ORDER}
-      value={selected}
-      onValueChange={onChange}
-    >
+    <Select onValueChange={onChange}>
       <SelectTrigger>
         <SelectValue placeholder="Sort by" />
       </SelectTrigger>

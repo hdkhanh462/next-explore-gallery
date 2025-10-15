@@ -13,17 +13,12 @@ export const DEFAULT_LIMIT = 6;
 const LIMITS = ["6", "12", "18", "24", "30"];
 
 type Props = {
-  selected: string;
   onChange: (limit: string) => void;
 };
 
-export default function LimitSelector({ selected, onChange }: Props) {
+export default function LimitSelector({ onChange }: Props) {
   return (
-    <Select
-      defaultValue={DEFAULT_LIMIT.toString()}
-      value={selected}
-      onValueChange={onChange}
-    >
+    <Select onValueChange={onChange}>
       <SelectTrigger>
         <SelectValue placeholder="Show more" />
       </SelectTrigger>
