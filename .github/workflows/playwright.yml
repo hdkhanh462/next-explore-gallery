@@ -5,7 +5,10 @@ on:
   pull_request:
     branches: [ main, master ]
 jobs:
-  test:
+  playwright-tests:
+    name: Playwright E2E Tests
+    env:
+      NEXT_PUBLIC_BASE_URL: "http://localhost:3000" 
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
