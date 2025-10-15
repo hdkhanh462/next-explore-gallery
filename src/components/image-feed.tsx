@@ -88,7 +88,11 @@ export function ImageItemCard({ img }: { img: ImageItem }) {
             alt={img.title}
             fill
             className="object-cover rounded-sm"
-            sizes="(max-width: 768px) 100vw, 33vw"
+            quality={50}
+            sizes="
+              (max-width: 640px) 100vw,
+              (max-width: 1024px) 50vw,
+              33vw"
           />
         </div>
       </ItemHeader>
